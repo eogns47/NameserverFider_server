@@ -2,6 +2,7 @@ package potato.nsfServer.DataCenter.api;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
@@ -30,6 +31,12 @@ public class DataApi {
 
     @Autowired
     DataService dataService;
+    public static final UUID randomUUID = UUID.randomUUID();
+
+    @GetMapping("/test")
+    public ResponseEntity<UUID> test(){
+        return ResponseEntity.ok(randomUUID);
+    }
 
     @GetMapping("/listOfPart")
     public ApiResponse<ResponseData> distributePart() {

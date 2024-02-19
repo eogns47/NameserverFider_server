@@ -58,6 +58,7 @@ public class DataService {
 
     public void initCount(int count){
         current_page=count;
+        log.info("Set StartNum as "+count);
     }
 
 }
