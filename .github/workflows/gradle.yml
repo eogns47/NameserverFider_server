@@ -56,3 +56,14 @@ jobs:
           docker buildx create --use
           docker buildx inspect
           docker buildx build --platform linux/arm64/v8,linux/amd64 -t ${{ secrets.DOCKERHUB_USERNAME }}/nsfserver:v2 --push .
+
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    if: ${{ needs.build == 'success' }}
+    steps:
+    - name: ✨ 배포 스크립트 실행
+      run: |
+        sh /home/ubuntu/deploy.sh
+            
