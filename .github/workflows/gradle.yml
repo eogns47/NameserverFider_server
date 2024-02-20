@@ -50,7 +50,6 @@ jobs:
 
       - name: Install docker buildx 
         uses: docker/setup-buildx-action@v1
-	
     # 도커 빌드
       - name: Build Docker Image
         run: |
