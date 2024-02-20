@@ -61,7 +61,7 @@ jobs:
   deploy:
     needs: build
     runs-on: self-hosted
-    if: ${{ needs.build == 'success' }}
+    # if: ${{ needs.build == 'success' }
     steps:
     - name: ✨ 배포 스크립트 실행
       run: |
