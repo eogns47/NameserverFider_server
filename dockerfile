@@ -17,4 +17,4 @@ COPY --from=builder /app/${JAR_FILE} app.jar
 
 EXPOSE 8080
 # 시스템 진입점 정의
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java", "-Dserver.env=${ENV}", "-jar", "/app.jar"]
