@@ -61,9 +61,39 @@ jobs:
   deploy:
     needs: build
     runs-on: self-hosted
-    # if: ${{ needs.build == 'success' }
     steps:
     - name: ✨ 배포 스크립트 실행
       run: |
         sh /home/ubuntu/deploy.sh
-            
+    - name: Blue/Green health check
+      run: |
+        echo "INSTANCE_ENV=$(curl -s "http://${{ secrets.NGINX_IP }}/env")" >> $GITHUB_ENV
+    - name: Set target ip
+      # prod1, prod2 둘 다 검사해야 하지만, 현재는 prod1만 검사
+      # CURRENT_UPSTREAM : env로 요청 보내서 blue 인지, green인지 알아옴. 이걸 curl로 해서 변수로 만든다. 즉 blue,green,오류 중에 하나
+      # CURRENT_IP : 만약 환경이 blue라면 blue 인스턴스의 prod1의 ip(111.111.111.111:8080)가 들어감
+      # STOPPED_IP : 만약 환경이 blue라면 멈춰있는 green의 prod1 ip가 들어감.
+      # TARGET_UPSTREAM : 바꿀 env
+      run: |
+        CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.NGINX_IP }}/env")
+        echo $CURRENT_UPSTREAM
+        if [ $CURRENT_UPSTREAM = "blue" ]; then
+          echo "CURRENT_IP=${{ secrets.BLUE_IP }}" >> $GITHUB_ENV
+          echo "STOPPED_IP=${{ secrets.GREEN_IP }}" >> $GITHUB_ENV
+          echo "TARGET_UPSTREAM=green" >> $GITHUB_ENV
+          echo "blue"
+        elif [ $CURRENT_UPSTREAM = "green" ]; then
+          echo "CURRENT_IP=${{ secrets.GREEN_IP }}" >> $GITHUB_ENV
+          echo "STOPPED_IP=${{ secrets.BLUE_IP }}" >> $GITHUB_ENV
+          echo "TARGET_UPSTREAM=blue" >> $GITHUB_ENV
+          echo "green"
+        else
+          echo "error"
+          exit 1
+        fi
+    - name: Execute Server Docker compose
+      run: |
+        docker pull ${{ secrets.DOCKERHUB_USERNAME }}/nsfserver:v2
+        docker pull ${{ secrets.DOCKERHUB_USERNAME }}/mynginx
+        docker-compose up -d
+          
