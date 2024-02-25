@@ -17,7 +17,7 @@ services:
             - '8082:8080'
         container_name: tserver1
         environment:
-            - ENV = blue
+            - ENV=blue
         volumes:
             - nsf_log:/logs
 
@@ -27,7 +27,7 @@ services:
             - '8081:8080'
         container_name: tserver2
         environment:
-            - ENV = blue
+            - ENV=blue
         volumes:
             - nsf_log:/logs
 volumes:
