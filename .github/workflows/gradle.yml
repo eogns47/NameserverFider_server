@@ -51,6 +51,7 @@ jobs:
             # 도커 빌드
             - name: Build Docker Image
               run: |
+                  echo "CURRENT_IP=${{ secrets.GREEN_IP }}" >> $GITHUB_ENV
                   docker buildx create --use
                   docker buildx inspect
                   docker buildx build --platform linux/arm64/v8,linux/amd64 -t ${{ secrets.DOCKERHUB_USERNAME }}/nsfserver:v2 --push .
