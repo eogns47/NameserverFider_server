@@ -88,7 +88,13 @@ jobs:
                     exit 1
                   fi
             - name: Execute Server Docker compose
-              run: |
-                  docker pull ${{ secrets.DOCKERHUB_USERNAME }}/nsfserver:v2
-                  docker pull ${{ secrets.DOCKERHUB_USERNAME }}/mynginx
+              uses: appleboy/ssh-action@master
+              with:
+                username: ${{ secrets.SSH_USER }}
+                host: ${{ env.STOPPED_IP }} # 위에서 지정한 환경변수
+                key: ${{ secrets.SSH_KEY }}
+                script_stop: true
+                script: | 
+                  cd ~/workspace/kdh 
+                  docker pull ${{ secrets.DOCKERHUB_USERNAME }}/nsfserver:v2 
                   docker-compose up -d
