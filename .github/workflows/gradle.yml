@@ -94,7 +94,7 @@ jobs:
               with:
                 username: ${{ secrets.SSH_USER }}
                 host: ${{ env.STOPPED_IP }} # 위에서 지정한 환경변수
-                password: ${{ secrets.SSH_PW }}
+                key: ${{ secrets.SSH_KEY }}
                 script_stop: true
                 script: | 
                   cd ~/workspace/kdh 
