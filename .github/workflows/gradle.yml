@@ -106,7 +106,6 @@ jobs:
               uses: jtalk/url-health-check-action@v3
               with:
                 url: http://${{ env.STOPPED_IP }}:8081/env
-		# 총 5번 하는데, 5초의 간격을 두고함. 이때까지 응답이 정상이 아니라면 배포 실패
                 max-attempts: 5 # Optional, defaults to 1
                 retry-delay:  5s # Optional, only applicable to max-attempts > 1
                 timeout: 30s
@@ -115,12 +114,10 @@ jobs:
               uses: jtalk/url-health-check-action@v3
               with:
                 url: http://${{ env.STOPPED_IP }}:8082/env
-		# 총 5번 하는데, 5초의 간격을 두고함. 이때까지 응답이 정상이 아니라면 배포 실패
                 max-attempts: 5 # Optional, defaults to 1
                 retry-delay:  5s # Optional, only applicable to max-attempts > 1
                 timeout: 30s
                 
-            # 엔진엑스의 프록시 변경
             - name: Change nginx upstream
               uses: appleboy/ssh-action@master
               with:
@@ -128,8 +125,6 @@ jobs:
                 host: ${{ secrets.NGINX_IP }}
                 key: ${{ secrets.NGINX_KEY }}
                 script_stop: true
-			          # 도커로 들어가서 service_env를 바꿔주고 reload
-			          # 여기서 -i가 아닌 -it로 진행하면 오류가 발생하고, -c가 없으면 도커가 아닌 호스트에서 경로를 찾는다. 주의
                 script: |
                   docker exec -i nginx bash -c 'echo "set \$service_env ${{ env.TARGET_UPSTREAM }};" > /etc/nginx/conf.d/service-env.inc && service nginx reload'
                   
