@@ -93,7 +93,7 @@ jobs:
               uses: appleboy/ssh-action@v0.1.4
               with:
                 username: ${{ secrets.SSH_USER }}
-                host: ${{ env.STOPPED_IP }} # 위에서 지정한 환경변수
+                host: ${{ env.CURRENT_IP }} # 위에서 지정한 환경변수
                 key: ${{ secrets.SSH_KEY }}
                 script_stop: true
                 script: | 
